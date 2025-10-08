@@ -1,5 +1,7 @@
 # onflow
 
+![](misc/bids2nf.svg)
+
 Optic nerve analysis pipeline
 
 ```        
