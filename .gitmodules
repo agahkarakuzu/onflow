@@ -1,0 +1,3 @@
+[submodule "bids2nf"]
+	path = bids2nf
+	url = https://github.com/agahkarakuzu/bids2nf.git
