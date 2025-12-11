@@ -10,6 +10,7 @@
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
+.claude
 # Package Files #
 *.jar
 *.war
@@ -22,8 +23,11 @@
 work/
 .DS_Store
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*
 new_outputs/
 results/
+dag-*.html
+report-*.html
+timeline-*.html
+trace-*.txt
