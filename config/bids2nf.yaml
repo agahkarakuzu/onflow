@@ -28,7 +28,7 @@ DWI_seg:
 # DERIVATIVES - Quantitative Maps
 # ========================================
 
-FA:
+fa:
   plain_set:
     description: "Fractional anisotropy map from tractoflow derivatives"
 T1map:
