@@ -1,9 +1,8 @@
 # ========================================
 # bids2nf Configuration for ONFLOW
-
+# ========================================
 
 loop_over: [subject, session, run]
-
 
 T1w:
   plain_set:
