@@ -1,6 +1,6 @@
 # ========================================
-# bids2nf Configuration for Optic Nerve Registration Pipeline
-# ========================================
+# bids2nf Configuration for ONFLOW
+
 
 loop_over: [subject, session, run]
 
