@@ -1,0 +1,31 @@
+# ========================================
+# bids2nf Configuration for ONFLOW
+# ========================================
+
+loop_over: [subject, session, run]
+
+T1w:
+  plain_set:
+    description: "T1-weighted anatomical (MP2RAGE UNI-DEN or similar)"
+dwi:
+  plain_set:
+    description: "Diffusion weighted imaging"
+    additional_extensions: ["bval", "bvec"]
+
+UNIT1:
+  plain_set:
+    description: "MP2RAGE UNI-T1 map or similar"
+# ========================================
+# DERIVATIVES - Segmentation Masks
+# ========================================
+mask:
+  group_by_modality: true
+  plain_set:
+    description: "Segmentation masks"
+
+FA:
+  plain_set:
+    description: "Fractional anisotropy map from tractoflow derivatives"
+T1map:
+  plain_set:
+    description: "Quantitative T1 relaxation time map"
