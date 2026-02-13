@@ -28,9 +28,14 @@ process ANTS_REGISTRATION_SYN {
 
     script:
     def (subject, session, run) = grouping_key
-    output_prefix = "${subject}_${session}_${run}_${moving_type}2${fixed_type}_"
+    // Construct BIDS-compliant filename (omit run if it's "NA")
+    def run_part = (run && run != "NA") ? "_${run}" : ""
+    output_prefix = "${subject}_${session}${run_part}_${moving_type}2${fixed_type}_"
 
     """
+    export ANTSPATH=/usr/lib/ants
+    export PATH=\${ANTSPATH}:\${PATH}
+
     antsRegistrationSyN.sh \\
         -d 3 \\
         -t ${registration_type} \\

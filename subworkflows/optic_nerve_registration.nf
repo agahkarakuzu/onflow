@@ -69,10 +69,10 @@ workflow optic_nerve_registration {
             )
         }
 
-    // T1w segmentation in MNI (not refined)
+    // Anatomical mask in MNI (not refined)
     t1wseg_output = initial_registration.out.derivatives_in_mni
         .filter { groupingKey, img, imgType, refType ->
-            imgType == 'T1w_seg'
+            imgType == 'mask_anat'
         }
         .map { groupingKey, img, imgType, refType ->
             tuple(
@@ -93,7 +93,7 @@ workflow optic_nerve_registration {
             def suffix = imgType
             def desc = 'MNIcorrected'
 
-            if (imgType == 'DWI_seg_corrected') {
+            if (imgType == 'mask_dwi_corrected') {
                 suffix = 'dseg'
             } else if (imgType == 'dwi_corrected') {
                 suffix = 'dwi'

@@ -12,22 +12,18 @@ dwi:
     description: "Diffusion weighted imaging"
     additional_extensions: ["bval", "bvec"]
 
+UNIT1:
+  plain_set:
+    description: "MP2RAGE UNI-T1 map or similar"
 # ========================================
 # DERIVATIVES - Segmentation Masks
 # ========================================
-T1w_seg:
+mask:
+  group_by_modality: true
   plain_set:
-    description: "T1w segmentation mask"
-    
-DWI_seg:
-  plain_set:
-    description: "DWI segmentation mask"
+    description: "Segmentation masks"
 
-# ========================================
-# DERIVATIVES - Quantitative Maps
-# ========================================
-
-fa:
+FA:
   plain_set:
     description: "Fractional anisotropy map from tractoflow derivatives"
 T1map:

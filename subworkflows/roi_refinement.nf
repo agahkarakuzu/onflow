@@ -7,12 +7,13 @@
 // 3. Register DWI_ROI → T1w_ROI (rigid refinement)
 // 4. Apply refinement transform to DWI-derived images only
 //
-// Note: Only DWI-derived images (dwi, DWI_seg, FA) are refined.
-// T1w-derived images (T1w, T1w_seg, T1map) use initial registration.
+// Note: Only DWI-derived images (dwi, mask_dwi, FA) are refined.
+// T1w-derived images (T1w, mask_anat, T1map) use initial registration.
 
-include { FSL_ROI } from '../modules/roi/fsl_roi.nf'
-include { ANTS_REGISTRATION_SYN } from '../modules/registration/ants_registration_syn.nf'
-include { ANTS_APPLY_TRANSFORMS } from '../modules/registration/ants_apply_transforms.nf'
+include { FSL_ROI as T1W_ROI_EXTRACT } from '../modules/roi/fsl_roi.nf'
+include { FSL_ROI as DWI_ROI_EXTRACT } from '../modules/roi/fsl_roi.nf'
+include { ANTS_REGISTRATION_SYN as ROI_REFINEMENT_REG } from '../modules/registration/ants_registration_syn.nf'
+include { ANTS_APPLY_TRANSFORMS as APPLY_ROI_REFINEMENT } from '../modules/registration/ants_apply_transforms.nf'
 
 workflow roi_refinement {
     take:
@@ -39,8 +40,8 @@ workflow roi_refinement {
         )
     }
 
-    FSL_ROI(t1w_roi_input)
-    t1w_roi = FSL_ROI.out.roi_image
+    T1W_ROI_EXTRACT(t1w_roi_input)
+    t1w_roi = T1W_ROI_EXTRACT.out.roi_image
 
     // ========================================
     // Step 2: Create DWI ROI in MNI space
@@ -59,8 +60,8 @@ workflow roi_refinement {
         )
     }
 
-    FSL_ROI(dwi_roi_input)
-    dwi_roi = FSL_ROI.out.roi_image
+    DWI_ROI_EXTRACT(dwi_roi_input)
+    dwi_roi = DWI_ROI_EXTRACT.out.roi_image
 
     // ========================================
     // Step 3: Register DWI ROI to T1w ROI (rigid refinement)
@@ -78,13 +79,13 @@ workflow roi_refinement {
             )
         }
 
-    ANTS_REGISTRATION_SYN(roi_registration_input)
-    roi_refinement_results = ANTS_REGISTRATION_SYN.out.registration_results
+    ROI_REFINEMENT_REG(roi_registration_input)
+    roi_refinement_results = ROI_REFINEMENT_REG.out.registration_results
 
     // ========================================
     // Step 4: Apply refinement transform to DWI-derived images
     // ========================================
-    // Only refine DWI-derived images (DWI_seg, FA)
+    // Only refine DWI-derived images (mask_dwi, FA)
     // T1w-derived images are not refined as they don't need the DWI→T1w correction
     derivative_refinement_input = derivatives_in_mni
         .join(roi_refinement_results, by: 0)
@@ -94,8 +95,8 @@ workflow roi_refinement {
                roi_warped, roi_mat, roi_inv, roi_fixed, roi_moving,
                t1w_warped, t1w_mat, t1w_inv, t1w_fixed, t1w_moving ->
 
-            // Only refine DWI-derived images (DWI_seg, FA)
-            if (deriv_type.contains('DWI') || deriv_type == 'FA') {
+            // Only refine DWI-derived images (mask_dwi, FA)
+            if (deriv_type == 'mask_dwi' || deriv_type == 'FA') {
                 tuple(
                     groupingKey,
                     deriv_img,
@@ -138,8 +139,8 @@ workflow roi_refinement {
     // Combine all refinement inputs
     all_refinement_inputs = derivative_refinement_input.mix(dwi_refinement_input)
 
-    ANTS_APPLY_TRANSFORMS(all_refinement_inputs)
-    refined_images = ANTS_APPLY_TRANSFORMS.out.transformed_image
+    APPLY_ROI_REFINEMENT(all_refinement_inputs)
+    refined_images = APPLY_ROI_REFINEMENT.out.transformed_image
 
     // ========================================
     // Emit outputs

@@ -27,7 +27,9 @@ process FSL_ROI {
 
     script:
     def (subject, session, run) = grouping_key
-    output_file = "${subject}_${session}_${run}_${image_type}_roi.nii.gz"
+    // Construct BIDS-compliant filename (omit run if it's "NA")
+    def run_part = (run && run != "NA") ? "_${run}" : ""
+    output_file = "${subject}_${session}${run_part}_${image_type}_roi.nii.gz"
 
     """
     fslroi ${input_image} ${output_file} \\

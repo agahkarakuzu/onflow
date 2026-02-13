@@ -27,7 +27,9 @@ process DWI_B0_EXTRACTION {
 
     script:
     def (subject, session, run) = grouping_key
-    output_file = "${subject}_${session}_${run}_b0.nii.gz"
+    // Construct BIDS-compliant filename (omit run if it's "NA")
+    def run_part = (run && run != "NA") ? "_${run}" : ""
+    output_file = "${subject}_${session}${run_part}_b0.nii.gz"
 
     """
     # Extract first volume (assumed to be b0)

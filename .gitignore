@@ -31,3 +31,4 @@ dag-*.html
 report-*.html
 timeline-*.html
 trace-*.txt
+derivatives/

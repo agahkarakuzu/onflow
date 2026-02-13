@@ -27,7 +27,9 @@
 
         script:
         def (subject, session, run) = grouping_key
-        output_file = "${subject}_${session}_${run}_${image_type}_in_${reference_type}.nii.gz"
+        // Construct BIDS-compliant filename (omit run if it's "NA")
+        def run_part = (run && run != "NA") ? "_${run}" : ""
+        output_file = "${subject}_${session}${run_part}_${image_type}_in_${reference_type}.nii.gz"
 
         // Handle multiple transforms (they should be applied in order)
         // If transform is a list, create multiple -t arguments
@@ -37,6 +39,9 @@
             "-t ${transform}"
 
         """
+        export ANTSPATH=/usr/lib/ants
+        export PATH=\${ANTSPATH}:\${PATH}
+
         antsApplyTransforms \\
             -d 3 \\
             -i ${input_image} \\
